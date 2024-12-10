@@ -12,6 +12,7 @@ class ImageForm(BaseModel):
     image: str
     image: str
 
+"""
 origins = [
     "http://localhost/",
     "http://localhost:8080",
@@ -20,7 +21,7 @@ origins = [
     "http://127.0.0.1:8000/process-image/",
     "file:///C:/Users/Mike/PycharmProjects/sonolize/index.html",
     '192.168.1.75'
-]
+]"""
 
 app.add_middleware(
     CORSMiddleware,
@@ -29,7 +30,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 @app.post('/process-image/')
 async def process_image(image: UploadFile = File(...), ):
@@ -42,4 +42,4 @@ async def process_image(image: UploadFile = File(...), ):
 
     lol.pixels = lol._unscan_image()
     lol._save()"""
-    return FileResponse(path='test1.png', status_code=200)
+    return FileResponse(path='testimages/test1.png', status_code=200)

@@ -1,10 +1,9 @@
 from copy import deepcopy
 import numpy
 from PIL import Image
-import PIL.PyAccess
 import numpy as np
 import enum
-from scipy.fftpack import fft
+
 
 
 class ScanType(enum.Enum):
@@ -95,7 +94,7 @@ class Sonolize:
         self.scan = self._scan_image()
 
     def _save(self):
-        Image.fromarray(self.pixels).save('test1.png')
+        Image.fromarray(self.pixels).save('testimages/test1.png')
 
 
     @property
