@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="index.css">
+    </head>
+    <body>
+        <h1>Hi! Sonolize your image!</h1>
+        <form id="image-form">
+            <label for="image">Upload Image:</label>
+            <input type="file" id="image" name="image">
+            <br><br>
+            <p1>Effects:</p1>
+            <table>
+                <tr>
+                    <td>
+                        <label for="delaycheckmark">Delay:</label>
+                        <input type="checkbox" id="delaycheckmark" value="false" name="delaycheckmark">
+                        </td>
+                    <td>
+                    <label for="delaytimeknb">Delay Time:</label>
+                    <input type="range" id="delaytimeknb" min="0" max="5" step="0.1" value="1" name="delaytimeknb">
+                    </td>
+                    <td>
+                        <label for="delayvolumeknb">Delay Volume:</label>
+                        <input type="range" id="delayvolumeknb" min="-2.5" max="2.5" step="0.1" value="1" name="delayvolumeknb">
+                    </td>
+                    
+                </tr>
+            </table>
+            <input type="submit">
+        </form>
+        <h3>Processed Image:</h3>
+        <img id="processed-image" style="max-width: 500px;"/>
+        
+        <script>
+            const form = document.getElementById('image-form');
+            form.onsubmit = async (e) => {
+              e.preventDefault();
+              
+              const formData = new FormData(form);
+              const response = await fetch('http://127.0.0.1:8000/process-image/', {
+                method: 'POST',
+                body: formData
+              });
+              
+              const blob = await response.blob();
+              const imgUrl = URL.createObjectURL(blob);
+              document.getElementById('processed-image').src = imgUrl;
+              
+            }; 
+          </script>
+    </body>
+</html>
