@@ -2,10 +2,10 @@ from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from PIL import Image
-from typing import Annotated
+from typing import Annotated, Optional
 from io import BytesIO
 from pydantic import BaseModel
-from sonolize import Sonolize, ScanType, Delay, Chain
+from sonolize import Sonolize, ScanType, Delay, Compressor, Chain
 
 app = FastAPI()
 
@@ -34,15 +34,25 @@ app.add_middleware(
 
 @app.post('/process-image/')
 async def process_image(
-                        delaycheckmark: bool = Form(...),
+                        delaycheckmark: bool = Form(default=False),
                         delaytimeknb: float = Form(...),
                         delayvolumeknb: float = Form(...),
+                        compcheckmark: bool = Form(default=False),
+                        compattimeknb: float = Form(...),
+                        compreltimeknb: float = Form(...),
+                        compthresknb: float = Form(...),
+                        compratknb: float = Form(...),
                         image: UploadFile = File(...)):
 
     img_obj = Sonolize(image.file, ScanType.HORIZONTAL, lock_alpha = True)
-    chain1 = Chain([Delay(delaytimeknb, delayvolumeknb)])
-    img_obj.scan = chain1(img_obj.scan)
-    img_obj.pixels = img_obj._unscan_image()
+    if delaycheckmark == True:
+        chain1 = Chain([Delay(delaytimeknb, delayvolumeknb)])
+        img_obj.scan = chain1(img_obj.scan)
+        img_obj.pixels = img_obj._unscan_image()
+    if compcheckmark == True:
+        chain1 = Chain([Compressor(compattimeknb, compreltimeknb, compthresknb, compratknb)])
+        img_obj.scan = chain1(img_obj.scan)
+        img_obj.pixels = img_obj._unscan_image()
     img_obj._save()
 
     return FileResponse(path='testimages/test1.png', status_code=200)

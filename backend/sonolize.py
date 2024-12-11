@@ -39,18 +39,19 @@ class Compressor:
         self.attack_time = attack_time
         self.release_time = release_time
         self.sample_rate = sample_rate
-        self.ar = attack_time*sample_rate
-        self.rr = release_time * sample_rate
+        self.ar = int(attack_time*sample_rate)
+        self.rr = int(release_time * sample_rate)
         self.threshold = threshold*255
         self.ratio = ratio
 
 
     def __call__(self, input_audio: numpy.ndarray):
         cur_audio = deepcopy(input_audio)
+        #cur_audio_offset = numpy.array([0]*self.ar) + cur_audio[:-self.ar]
         is_triggered = False
         for peak_i in range(input_audio.shape[0] - self.ar):
-            if cur_audio[peak_i] >= self.threshold and (peak_i+1)%4:
-                cur_audio[peak_i + self.ar] = byte_validate(int(cur_audio[peak_i + self.ar]/self.ratio))
+            if cur_audio[peak_i] >= self.threshold:
+                cur_audio[peak_i + self.ar] = byte_validate(cur_audio[peak_i + self.ar]//self.ratio)
         return cur_audio
 
 
