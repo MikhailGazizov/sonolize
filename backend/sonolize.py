@@ -24,7 +24,7 @@ class Delay:
     def __init__(self, delay_time: float = 0, volume : float = .5, sample_rate: int = 100):
         self.delay_time = delay_time
         self.sample_rate = sample_rate
-        self.dr = delay_time*sample_rate
+        self.dr = int(delay_time*sample_rate)
         self.volume = volume
 
     def __call__(self, input_audio: numpy.ndarray):
@@ -109,15 +109,10 @@ class Sonolize:
     def width(self):
         return self._width
 
-d1 = Chain([Delay(1, 0.2, 10),Compressor(6, 0.2, 0.3, 10, 10),Compressor(1, 0.2, 0.9, 10, 1),])
+if __name__ == "__main__":
 
-lol = Sonolize("test2.png", scan_type=ScanType.VERTICAL, lock_alpha=False)
-print(lol.pixels[0])
-lol.scan = d1(lol.scan)
+    print("""
+    Please, keep in mind that this is utility and still under construction
+    """)
 
-lol.pixels = lol._unscan_image()
-lol._save()
 
-"""a = [0,101,-100, 1000, 10]
-b = fft(a)
-print(b)"""

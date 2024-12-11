@@ -2,6 +2,7 @@ from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from PIL import Image
+from typing import Annotated
 from io import BytesIO
 from pydantic import BaseModel
 from sonolize import Sonolize, ScanType, Delay, Chain
@@ -32,14 +33,16 @@ app.add_middleware(
 )
 
 @app.post('/process-image/')
-async def process_image(image: UploadFile = File(...), ):
+async def process_image(
+                        delaycheckmark: bool = Form(...),
+                        delaytimeknb: float = Form(...),
+                        delayvolumeknb: float = Form(...),
+                        image: UploadFile = File(...)):
 
-    print(image[0])
-    """lol = Sonolize(image, scan_type=ScanType.VERTICAL, lock_alpha=False)
-    print(lol.pixels[0])
-    d1 = Chain([Delay(1, 0.2, 10)])
-    lol.scan = d1(lol.scan)
+    img_obj = Sonolize(image.file, ScanType.HORIZONTAL, lock_alpha = True)
+    chain1 = Chain([Delay(delaytimeknb, delayvolumeknb)])
+    img_obj.scan = chain1(img_obj.scan)
+    img_obj.pixels = img_obj._unscan_image()
+    img_obj._save()
 
-    lol.pixels = lol._unscan_image()
-    lol._save()"""
     return FileResponse(path='testimages/test1.png', status_code=200)
