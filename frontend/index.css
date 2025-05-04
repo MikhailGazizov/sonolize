@@ -1,13 +1,11 @@
 body {
-  color: #FFFFFF;
+  color: #2020A0;
   font-family: Courier New, Courier, monospace;
-  font-size: 12pt;
-  background-color: #1b1b1b;
+  font-size: 16pt;
+  background-color: #FAFAFF;
 }
 
 header {
-  background-color: #11221b;
-  width: 100%;
 }
 
 #processed-image {
