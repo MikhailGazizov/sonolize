@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Title{% endblock %}</title>
+    <link rel="stylesheet" href="../design/index.css">
+</head>
+<body>
+    <header>
+        <h1>Sonolize</h1>
+        <nav>
+            <a href="index.html">Edit Image</a>
+            <a href="about.html">About</a>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

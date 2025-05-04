@@ -1,28 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>About Page</title>
-    <link rel="stylesheet" href="index.css">
-</head>
-<body>
-    <header>
-        <h1>Sonolize</h1>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="about.html">About</a>
-        </nav>
-    </header>
-    <section>
-        <h2>About Sonolize</h2>
-        <p>Sonolize is a tool that aggregates Audio and Image processing together to facilitate glitch-art creation with databending.</p>
-        <h3>What is Databending?</h3>
-        <p>Databending is an action of manual interference of raw data by deleting, adding and editing strings of bytes in media files in order to create visual and/or sound distortions.</p>
-        <h3>Why Sonolize?</h3>
-        <p>While databending is almost purely manual process, doing it without software might damage vital bytes of containers which will lead to corruption of file till extent of being not able to be open. </p>
-        <p>This is where Sonolize comes in. It parses the image and automates application of Digital Signal Processing preserving container bits from being redacted.</p>
-        <h3>How does it work?</h3>
-        <p>Computers store data in binary which means that both images and audio on your computer are streams of 1s and 0s, but the difference is how computer treats this data; Image can be opened as Audio and vice versa. In this particular instance Sonolize interprets image bytes as Pulse Code Modulation (PCM, is a method of coding audio signal) and then applies Digital Signal Processing used for music; like Delay and Compression. Afterward, processed audio is being translated back to image format</p>
-    </section>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% title block}About{% endblock %}
+
+{% block content %}
+<h2>About Sonolize</h2>
+<p>Sonolize is a tool that aggregates Audio and Image processing together to facilitate glitch-art creation with databending.</p>
+<h3>What is Databending?</h3>
+<p>Databending is an action of manual interference of raw data by deleting, adding and editing strings of bytes in media files in order to create visual and/or sound distortions.</p>
+<h3>Why Sonolize?</h3>
+<p>While databending is almost purely manual process, doing it without software might damage vital bytes of containers which will lead to corruption of file till extent of being not able to be open. </p>
+<p>This is where Sonolize comes in. It parses the image and automates application of Digital Signal Processing preserving container bits from being redacted.</p>
+<h3>How does it work?</h3>
+<p>Computers store data in binary which means that both images and audio on your computer are streams of 1s and 0s, but the difference is how computer treats this data; Image can be opened as Audio and vice versa. In this particular instance Sonolize interprets image bytes as Pulse Code Modulation (PCM, is a method of coding audio signal) and then applies Digital Signal Processing used for music; like Delay and Compression. Afterward, processed audio is being translated back to image format</p>
+{% endblock %}

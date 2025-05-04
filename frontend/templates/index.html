@@ -1,83 +1,71 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <link rel="stylesheet" href="index.css">
-    </head>
-    <body>
-        <header>
-            <h1>Sonolize</h1>
-            <nav>
-                <a href="index.html">Home</a>
-                <a href="about.html">About</a>
-            </nav>
-        </header>
-        <section>
-            <h2>Edit Image</h2>
-            <form id="image-form">
-                <label for="image">Upload Image:</label>
-                <input type="file" id="image" name="image">
-                <br><br>
-                <p>Effects:</p>
-                <table>
-                    <tr>
-                        <td>
-                            <label for="delaycheckmark">Delay:</label>
-                            <input type="checkbox" id="delaycheckmark" name="delaycheckmark">
-                            </td>
-                        <td>
-                        <label for="delaytimeknb">Delay Time:</label>
-                        <input type="range" id="delaytimeknb" min="0" max="5" step="0.1" value="1" name="delaytimeknb">
-                        </td>
-                        <td>
-                            <label for="delayvolumeknb">Delay Volume:</label>
-                            <input type="range" id="delayvolumeknb" min="-2.5" max="2.5" step="0.1" value="1" name="delayvolumeknb">
-                        </td>
+{% extends 'base.html' %}
 
-                    </tr>
-                    <tr>
-                        <td>
-                            <label for="compcheckmark">Compressor:</label>
-                            <input type="checkbox" id="compcheckmark" name="compcheckmark">
-                            </td>
-                        <td>
-                        <label for="compattimeknb">Compression Attack:</label>
-                        <input type="range" id="compattimeknb" min="0" max="5" step="0.1" value="1" name="compattimeknb">
-                        </td>
-                        <td>
-                            <label for="compreltimeknb">Compression Release:</label>
-                            <input type="range" id="compreltimeknb" min="0" max="2.5" step="0.1" value="1" name="compreltimeknb">
-                        </td>
-                        <td>
-                            <label for="compthresknb">Compression Threshold:</label>
-                            <input type="range" id="compthresknb" min="0" max="1" step="0.05" value="1" name="compthresknb">
-                        </td>
-                        <td>
-                            <label for="compratknb">Compression Ratio:</label>
-                            <input type="range" id="compratknb" min="-1" max="1" step="0.1" value="1" name="compratknb">
-                        </td>
-                    </tr>
-                </table>
-                <input type="submit">
-            </form>
-            <p>Processed Image:</p>
-            <img id="processed-image"/>
+{% title block}Edit Image{% endblock %}
 
-            <script>
-                const form = document.getElementById('image-form');
-                form.onsubmit = async (e) => {
-                  e.preventDefault();
+{% block content %}
+<h2>Edit Image</h2>
+<form id="image-form">
+    <label for="image">Upload Image:</label>
+    <input type="file" id="image" name="image">
+    <br><br>
+    <p>Effects:</p>
+    <table>
+        <tr>
+            <td>
+                <label for="delaycheckmark">Delay:</label>
+                <input type="checkbox" id="delaycheckmark" name="delaycheckmark">
+            </td>
+            <td>
+                <label for="delaytimeknb">Delay Time:</label>
+                <input type="range" id="delaytimeknb" min="0" max="5" step="0.1" value="1" name="delaytimeknb">
+            </td>
+            <td>
+                <label for="delayvolumeknb">Delay Volume:</label>
+                <input type="range" id="delayvolumeknb" min="-2.5" max="2.5" step="0.1" value="1" name="delayvolumeknb">
+            </td>
 
-                  const formData = new FormData(form);
-                  const response = await fetch('http://127.0.0.1:8000/process-image/', {
-                    method: 'POST',
-                    body: formData
-                  });
+        </tr>
+        <tr>
+            <td>
+                <label for="compcheckmark">Compressor:</label>
+                <input type="checkbox" id="compcheckmark" name="compcheckmark">
+            </td>
+            <td>
+                <label for="compattimeknb">Compression Attack:</label>
+                <input type="range" id="compattimeknb" min="0" max="5" step="0.1" value="1" name="compattimeknb">
+            </td>
+            <td>
+                <label for="compreltimeknb">Compression Release:</label>
+                <input type="range" id="compreltimeknb" min="0" max="2.5" step="0.1" value="1" name="compreltimeknb">
+            </td>
+            <td>
+                <label for="compthresknb">Compression Threshold:</label>
+                <input type="range" id="compthresknb" min="0" max="1" step="0.05" value="1" name="compthresknb">
+            </td>
+            <td>
+                <label for="compratknb">Compression Ratio:</label>
+                <input type="range" id="compratknb" min="-1" max="1" step="0.1" value="1" name="compratknb">
+            </td>
+        </tr>
+    </table>
+    <input type="submit">
+</form>
+<p>Processed Image:</p>
+<img id="processed-image"/>
+<script>
+    const form = document.getElementById('image-form');
+    form.onsubmit = async (e) => {
+        e.preventDefault();
 
-                  const blob = await response.blob();
-                  const imgUrl = URL.createObjectURL(blob);
-                  document.getElementById('processed-image').src = imgUrl;
-                };
-              </script>
-        </section>
-    </body>
-</html>
+        const formData = new FormData(form);
+        const response = await fetch('http://127.0.0.1:8000/process-image/', {
+            method: 'POST',
+            body: formData
+        });
+
+        const blob = await response.blob();
+        const imgUrl = URL.createObjectURL(blob);
+        document.getElementById('processed-image').src = imgUrl;
+    };
+</script>
+{% endblock %}
