@@ -5,7 +5,7 @@ from PIL import Image
 from typing import Annotated, Optional
 from io import BytesIO
 from pydantic import BaseModel
-from sonolize import Sonolize, ScanType, Delay, Compressor, Chain
+from backend.sonolize import Sonolize, ScanType, Delay, Compressor, Chain
 
 app = FastAPI()
 
@@ -55,4 +55,4 @@ async def process_image(
         img_obj.pixels = img_obj._unscan_image()
     img_obj._save()
 
-    return FileResponse(path='testimages/test1.png', status_code=200)
+    return FileResponse(path='backend/testimages/test1.png', status_code=200)

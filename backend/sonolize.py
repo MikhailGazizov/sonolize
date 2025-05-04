@@ -95,7 +95,7 @@ class Sonolize:
         self.scan = self._scan_image()
 
     def _save(self):
-        Image.fromarray(self.pixels).save('testimages/test1.png')
+        Image.fromarray(self.pixels).save('backend/testimages/test1.png')
 
 
     @property
