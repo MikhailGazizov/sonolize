@@ -1,17 +1,19 @@
-from fastapi import FastAPI, File, UploadFile, Form
+from fastapi import FastAPI, File, UploadFile, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
-from PIL import Image
-from typing import Annotated, Optional
-from io import BytesIO
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
+
 from backend.sonolize import Sonolize, ScanType, Delay, Compressor, Chain
 
 app = FastAPI()
 
+
 class ImageForm(BaseModel):
     image: str
     image: str
+
 
 """
 origins = [
@@ -24,6 +26,9 @@ origins = [
     '192.168.1.75'
 ]"""
 
+app.mount("/static", StaticFiles(directory="./frontend/static"), name="static")
+templates = Jinja2Templates(directory="./frontend/templates")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -32,20 +37,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.get('/', response_class=HTMLResponse)
+async def edit(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get('/about', response_class=HTMLResponse)
+async def edit(request: Request):
+    return templates.TemplateResponse("about.html", {"request": request})
+
 @app.post('/process-image/')
 async def process_image(
-                        delaycheckmark: bool = Form(default=False),
-                        delaytimeknb: float = Form(...),
-                        delayvolumeknb: float = Form(...),
-                        compcheckmark: bool = Form(default=False),
-                        compattimeknb: float = Form(...),
-                        compreltimeknb: float = Form(...),
-                        compthresknb: float = Form(...),
-                        compratknb: float = Form(...),
-                        image: UploadFile = File(...)):
-
-    img_obj = Sonolize(image.file, ScanType.HORIZONTAL, lock_alpha = True)
-    if delaycheckmark == True:
+        delaycheckmark: bool = Form(default=False),
+        delaytimeknb: float = Form(...),
+        delayvolumeknb: float = Form(...),
+        compcheckmark: bool = Form(default=False),
+        compattimeknb: float = Form(...),
+        compreltimeknb: float = Form(...),
+        compthresknb: float = Form(...),
+        compratknb: float = Form(...),
+        image: UploadFile = File(...)):
+    img_obj = Sonolize(image.file, ScanType.HORIZONTAL, lock_alpha=True)
+    if delaycheckmark:
         chain1 = Chain([Delay(delaytimeknb, delayvolumeknb)])
         img_obj.scan = chain1(img_obj.scan)
         img_obj.pixels = img_obj._unscan_image()
@@ -55,4 +68,4 @@ async def process_image(
         img_obj.pixels = img_obj._unscan_image()
     img_obj._save()
 
-    return FileResponse(path='backend/testimages/test1.png', status_code=200)
+    return FileResponse(path='./backend/testimages/test1.png', status_code=200)

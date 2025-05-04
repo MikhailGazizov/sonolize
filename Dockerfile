@@ -3,7 +3,7 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /app
+WORKDIR /sonolize
 
 # Install dependencies
 COPY requirements.txt .
@@ -11,6 +11,7 @@ RUN pip install -r requirements.txt
 
 # Copy application code
 COPY ./backend ./backend
+COPY ./frontend ./frontend
 
 # Expose the port FastAPI will run on
 EXPOSE 8000
