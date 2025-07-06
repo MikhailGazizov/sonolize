@@ -1,18 +1,15 @@
-from fastapi import FastAPI, File, UploadFile, Form, Request
+from typing import Annotated
+from fastapi import FastAPI, UploadFile, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
-from backend.sonolize import Sonolize, ScanType, Delay, Compressor, Chain
-
+from backend.sonolize import *
+from backend.models import *
+from backend.edit_functions import *
 app = FastAPI()
-
-
-class ImageForm(BaseModel):
-    image: str
-    image: str
 
 
 """
@@ -43,29 +40,19 @@ async def edit(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get('/about', response_class=HTMLResponse)
-async def edit(request: Request):
+async def about(request: Request):
     return templates.TemplateResponse("about.html", {"request": request})
 
 @app.post('/process-image/')
-async def process_image(
-        delaycheckmark: bool = Form(default=False),
-        delaytimeknb: float = Form(...),
-        delayvolumeknb: float = Form(...),
-        compcheckmark: bool = Form(default=False),
-        compattimeknb: float = Form(...),
-        compreltimeknb: float = Form(...),
-        compthresknb: float = Form(...),
-        compratknb: float = Form(...),
-        image: UploadFile = File(...)):
-    img_obj = Sonolize(image.file, ScanType.HORIZONTAL, lock_alpha=True)
-    if delaycheckmark:
-        chain1 = Chain([Delay(delaytimeknb, delayvolumeknb)])
-        img_obj.scan = chain1(img_obj.scan)
-        img_obj.pixels = img_obj._unscan_image()
-    if compcheckmark == True:
-        chain1 = Chain([Compressor(compattimeknb, compreltimeknb, compthresknb, compratknb)])
-        img_obj.scan = chain1(img_obj.scan)
-        img_obj.pixels = img_obj._unscan_image()
-    img_obj._save()
+async def process_image(data: Annotated[ImageForm, Form()]):
+    img_obj = initialize_image(data)
+    chain1 = Chain()
+    if data.delaycheckmark:
+        chain1 += create_delay(data)
+    if data.compcheckmark:
+        chain1 += create_compressor(data)
+    img_obj.scan = execute_chain(chain1,img_obj)
+    img_obj.save()
+
 
     return FileResponse(path='./backend/testimages/test1.png', status_code=200)

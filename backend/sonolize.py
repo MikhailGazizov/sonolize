@@ -95,7 +95,9 @@ class Chain:
     This type aggregates functionality of a real chain: sequence of effects and execution
     '''
 
-    def __init__(self, effects: list = []):
+    def __init__(self, effects=None):
+        if effects is None:
+            effects = []
         self.effects = effects
 
     def __call__(self, input_stream: numpy.ndarray) -> numpy.ndarray:
@@ -116,6 +118,7 @@ class Chain:
         :return: None
         '''
         self.effects.append(Effect)
+        return self
 
     def __sub__(self, Effect):
         '''
@@ -131,18 +134,22 @@ class Sonolize:
     Class sonolize is called to instantiate an Edit of image: it aggregates "low level" functions that facilitate getting the scan, inmporting and exporting the image.
     '''
 
-    def _scan_image(self) -> numpy.ndarray:
+    def scan_image(self) -> numpy.ndarray:
         '''
         Scans image; in other words unwraps 3-dimensional numpy arrays into 1-dimensional numpy array.
         :return: onedimensional numpy array depending on the scanning algorithm.
         '''
+
+
+        # Shaping depending on scan type
         if self.scan_type == ScanType.HORIZONTAL:
             scan = self.pixels.reshape((self._depth * self._width * self._height), order='A')
         if self.scan_type == ScanType.VERTICAL:
             scan = self.pixels.reshape((self._depth * self._width * self._height), order='F')
+        self.scan = scan
         return scan
 
-    def _unscan_image(self) -> numpy.ndarray:
+    def unscan_image(self) -> numpy.ndarray:
         '''
         Unscans image; in other words wraps 1-dimensional numpy arrays into 3-dimensional numpy array.
         :return: 3-dimensional numpy array depending on the scanning algorithm.
@@ -151,24 +158,30 @@ class Sonolize:
             unscan = self.scan.reshape((self._height, self._width, self._depth), order='A')
         if self.scan_type == ScanType.VERTICAL:
             unscan = self.scan.reshape((self._height, self._width, self._depth), order='F')
+        self.pixels = unscan
         return unscan
 
     def __init__(self, image_directory, scan_type=ScanType.HORIZONTAL, lock_alpha=True):
-        with Image.open(image_directory) as img:
+        self.image_directory = image_directory
+        self.lock_alpha = lock_alpha
+        self.scan_type = scan_type
+        self.pixels = None
+
+    def get_pixels(self):
+        with Image.open(self.image_directory) as img:
             self.pixels = np.asarray(img)
-            if lock_alpha and self.pixels.shape[2] == 4:
+            if self.lock_alpha and self.pixels.shape[2] == 4:
                 self.pixels = np.delete(self.pixels, 3, 2)
             self._depth = self.pixels.shape[2]
             self._width = img.width
             self._height = img.height
-        self.scan_type = scan_type
-        self.scan = self._scan_image()
 
-    def _save(self):
+    def save(self):
         '''
         Saves image to image folder
         :return: None
         '''
+        self.unscan_image()
         Image.fromarray(self.pixels).save('backend/testimages/test1.png')
 
     @property
