@@ -1,5 +1,5 @@
-from typing import Annotated
-from fastapi import FastAPI, UploadFile, Form, Request
+from typing import Annotated, List
+from fastapi import FastAPI, UploadFile, Form, Request, Depends, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -44,15 +44,11 @@ async def about(request: Request):
     return templates.TemplateResponse("about.html", {"request": request})
 
 @app.post('/process-image/')
-async def process_image(data: Annotated[ImageForm, Form()]):
-    img_obj = initialize_image(data)
-    chain1 = Chain()
-    if data.delaycheckmark:
-        chain1 += create_delay(data)
-    if data.compcheckmark:
-        chain1 += create_compressor(data)
-    img_obj.scan = execute_chain(chain1,img_obj)
-    img_obj.save()
-
-
+async def process_image(
+        image: Annotated[UploadFile, File()] = None,
+        effects_json: List[EffectUnion] = Depends(parse_json_effects)):
+    chain = create_effects_chain_from_form_list(effects_json)
+    image = initialize_image(image)
+    execute_chain(chain, image)
+    image.save()
     return FileResponse(path='./backend/testimages/test1.png', status_code=200)
