@@ -4,10 +4,16 @@ body {
   font-size: 16pt;
   background-color: #FAFAFF;
 }
+input {
 
+}
 header {
 }
 
 #processed-image {
     width: 50%;
+}
+
+#effect-container {
+    display: flex;
 }

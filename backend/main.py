@@ -37,7 +37,7 @@ app.add_middleware(
 
 @app.get('/', response_class=HTMLResponse)
 async def edit(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("index.html", {"request": request, "effects": [effect.model_json_schema() for effect in model_to_effect.keys()]})
 
 @app.get('/about', response_class=HTMLResponse)
 async def about(request: Request):
@@ -45,7 +45,7 @@ async def about(request: Request):
 
 @app.post('/process-image/')
 async def process_image(
-        image: Annotated[UploadFile, File()] = None,
+        image: UploadFile = File(...),
         effects_json: List[EffectUnion] = Depends(parse_json_effects)):
     chain = create_effects_chain_from_form_list(effects_json)
     image = initialize_image(image)
