@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Image{% endblock %}
+
+{% block content %}
+<h2>Edit Image</h2>
+<form id="image-form">
+    <label for="image">Upload Image:</label>
+    <input type="file" id="image" name="image">
+    <input type="submit" value="Submit">
+</form>
+<br><br>
+<form id="effect-form">
+        <label for="effect-choice">Choose Effect:</label>
+        <select name="effect-choice" id="effect-choice">
+            {% for effect in effects %}
+                <option value="{{effect}}">{{effect.properties.type.default}}</option>
+            {% endfor %}
+        </select>
+        <label for="effect-add"></label>
+        <input type="submit" id="effect-add" value="+">
+    </form>
+<div id="effect-container">
+</div>
+<p>Processed Image:</p>
+<img id="processed-image"/>
+<script src="../static/formsubmission.js"></script>
+<script src="../static/effectmanagement.js"></script>
+{% endblock %}

@@ -1,0 +1,19 @@
+body {
+  color: #2020A0;
+  font-family: Courier New, Courier, monospace;
+  font-size: 16pt;
+  background-color: #FAFAFF;
+}
+input {
+
+}
+header {
+}
+
+#processed-image {
+    width: 50%;
+}
+
+#effect-container {
+    display: flex;
+}
