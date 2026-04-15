@@ -28,14 +28,14 @@ def create_compressor(data: CompressorForm):
 
 def parse_json_effects(effects_json: str):
     effects_raw = json.loads(effects_json)
-    return parse_obj_as(List[EffectUnion], effects_raw)
+    return parse_obj_as(list[EffectUnion], effects_raw)
 
 model_to_effect = {
     DelayForm: create_delay,
     CompressorForm: create_compressor
 }
 
-def create_effects_chain_from_form_list(effects: List[EffectUnion]):
+def create_effects_chain_from_form_list(effects: list[EffectUnion]):
     chain = Chain()
     for effect in effects:
         chain + model_to_effect[effect.__class__](effect)
