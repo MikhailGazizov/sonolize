@@ -1,9 +1,10 @@
+from abc import ABC, abstractmethod
 from copy import deepcopy
 import numpy
 from PIL import Image
 import numpy as np
 import enum
-
+from typing import Union
 
 class ScanType(enum.Enum):
     '''
@@ -74,6 +75,7 @@ class Compressor:
         self.rr = int(release_time * sample_rate)
         self.threshold = threshold * 255
         self.ratio = ratio
+        self.threshold = threshold * 255
 
     def __call__(self, input_audio: numpy.ndarray) -> numpy.ndarray:
         '''
