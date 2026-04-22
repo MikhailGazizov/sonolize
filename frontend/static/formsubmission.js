@@ -1,31 +1,31 @@
 function effectsToJson() {
     const effectDivs = document.getElementsByClassName('effect-element');
-    let effectsJson = []
-    for (effectDiv in effectDivs) {
-        let current_effectJson = {}
+    let effectsJson = [];
 
-        for(knob in effectDivs[effectDiv].children) {
-            node_name = effectDivs[effectDiv].children[knob]['nodeName'];
+    for (let i = 0; i < effectDivs.length; i++) {
+        const card = effectDivs[i];
+        let current_effectJson = {};
 
-            if (node_name === 'H3') {
-                knob_value = effectDivs[effectDiv].children[knob].innerHTML;
-                console.log(knob_value);
-                current_effectJson['type'] = knob_value;
-            }
-
-            if (node_name === 'INPUT') {
-                knob_value = effectDivs[effectDiv].children[knob].value;
-                knob_id = effectDivs[effectDiv].children[knob]['attributes']['id'].value;
-                //console.log(knob_id);
-                current_effectJson[knob_id.toString().toLowerCase()] = knob_value;
-            }
+        // Read the pedal type from the title <h3> inside the header
+        const titleEl = card.querySelector('.pedal-title');
+        if (titleEl) {
+            current_effectJson['type'] = titleEl.textContent;
         }
+
+        // Read all knob values from hidden inputs nested anywhere in the card
+        const knobInputs = card.querySelectorAll('input[type="hidden"]');
+        knobInputs.forEach((input) => {
+            if (input.id) {
+                current_effectJson[input.id.toString().toLowerCase()] = input.value;
+            }
+        });
+
         effectsJson.push(current_effectJson);
     }
-    effectsJson = effectsJson.slice(0, -3)
-    effectsJson = JSON.stringify(effectsJson);
-    console.log(effectsJson);
-    return effectsJson;
+
+    const result = JSON.stringify(effectsJson);
+    console.log(result);
+    return result;
 }
 
 onFormSubmission = async () => {
@@ -48,7 +48,7 @@ onFormSubmission = async () => {
 };
 
 const form = document.querySelector("#image-form");
-    form.addEventListener("submit", (event) => {
-        event.preventDefault();
-        onFormSubmission();
-    });
+form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    onFormSubmission();
+});

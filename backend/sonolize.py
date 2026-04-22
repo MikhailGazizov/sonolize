@@ -30,6 +30,17 @@ def byte_validate(n: int) -> int:
     else:
         return n
 
+def audio_normalize(n: int) -> int:
+    """
+    maps unsigned (0..255) to signed (-1..1)
+    """
+    return n/127.5 - 1.0
+
+def image_normalize(n: int) -> int:
+    """
+    maps signed (-1..1) to unsigned (0..255) 
+    """
+    return (n+1.0)*127.5
 
 class Delay:
     '''
@@ -53,7 +64,7 @@ class Delay:
         '''
         cur_audio = deepcopy(input_audio)
         for peak_i in range(self.dr, input_audio.shape[0]):
-            cur_audio[peak_i] = byte_validate(int(input_audio[peak_i] + input_audio[peak_i - self.dr] * self.volume))
+            cur_audio[peak_i] = np.clip(input_audio[peak_i] + input_audio[peak_i - self.dr] * self.volume, -1.0, 1.0)
         return cur_audio
 
 
@@ -73,9 +84,8 @@ class Compressor:
         self.sample_rate = sample_rate
         self.ar = int(attack_time * sample_rate)
         self.rr = int(release_time * sample_rate)
-        self.threshold = threshold * 255
+        self.threshold = threshold
         self.ratio = ratio
-        self.threshold = threshold * 255
 
     def __call__(self, input_audio: numpy.ndarray) -> numpy.ndarray:
         '''
@@ -85,10 +95,9 @@ class Compressor:
         '''
         cur_audio = deepcopy(input_audio)
         # cur_audio_offset = numpy.array([0]*self.ar) + cur_audio[:-self.ar]
-        is_triggered = False
         for peak_i in range(input_audio.shape[0] - self.ar):
             if cur_audio[peak_i] >= self.threshold:
-                cur_audio[peak_i + self.ar] = byte_validate(cur_audio[peak_i + self.ar] // self.ratio)
+                cur_audio[peak_i + self.ar] = np.clip(cur_audio[peak_i + self.ar] / self.ratio, -1.0, 1.0)
         return cur_audio
 
 
@@ -139,6 +148,7 @@ class Sonolize:
     def scan_image(self) -> numpy.ndarray:
         '''
         Scans image; in other words unwraps 3-dimensional numpy arrays into 1-dimensional numpy array.
+        Also normalizes values from 0..255 to -1..1.
         :return: onedimensional numpy array depending on the scanning algorithm.
         '''
 
@@ -148,18 +158,24 @@ class Sonolize:
             scan = self.pixels.reshape((self._depth * self._width * self._height), order='A')
         if self.scan_type == ScanType.VERTICAL:
             scan = self.pixels.reshape((self._depth * self._width * self._height), order='F')
-        self.scan = scan
-        return scan
+        
+        self.scan = audio_normalize(scan.astype(np.float32))
+        return self.scan
 
     def unscan_image(self) -> numpy.ndarray:
         '''
         Unscans image; in other words wraps 1-dimensional numpy arrays into 3-dimensional numpy array.
+        Also maps values from -1..1 back to 0..255.
         :return: 3-dimensional numpy array depending on the scanning algorithm.
         '''
+        normalized_scan = image_normalize(self.scan)
+        # Clip to 0..255 and convert back to uint8 for image representation
+        clipped_scan = np.clip(normalized_scan, 0, 255).astype(np.uint8)
+
         if self.scan_type == ScanType.HORIZONTAL:
-            unscan = self.scan.reshape((self._height, self._width, self._depth), order='A')
+            unscan = clipped_scan.reshape((self._height, self._width, self._depth), order='A')
         if self.scan_type == ScanType.VERTICAL:
-            unscan = self.scan.reshape((self._height, self._width, self._depth), order='F')
+            unscan = clipped_scan.reshape((self._height, self._width, self._depth), order='F')
         self.pixels = unscan
         return unscan
 

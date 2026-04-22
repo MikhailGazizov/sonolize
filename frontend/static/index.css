@@ -1,19 +1,207 @@
-body {
-  color: #2020A0;
-  font-family: Courier New, Courier, monospace;
-  font-size: 16pt;
-  background-color: #FAFAFF;
-}
-input {
+/* ─── Base ───────────────────────────────────────────────────────────────── */
 
+body {
+    color: #2020A0;
+    font-family: Courier New, Courier, monospace;
+    font-size: 16pt;
+    background-color: #FAFAFF;
 }
-header {
-}
+
+input {}
+
+header {}
 
 #processed-image {
     width: 50%;
 }
 
+/* ─── Pedal chain container ──────────────────────────────────────────────── */
+
 #effect-container {
     display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 16px 0;
+}
+
+/* ─── Pedal card ─────────────────────────────────────────────────────────── */
+
+.effect-element {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(160deg, #2a2a3a 0%, #1a1a28 100%);
+    border: 2px solid #3a3a5c;
+    border-radius: 14px;
+    padding: 14px 18px 18px;
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    min-width: 140px;
+    cursor: default;
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.effect-element:hover {
+    box-shadow:
+        0 8px 28px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+}
+
+/* ─── Pedal header ───────────────────────────────────────────────────────── */
+
+.pedal-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    margin-bottom: 14px;
+}
+
+.pedal-title {
+    flex: 1;
+    text-align: center;
+    margin: 0;
+    font-family: Courier New, Courier, monospace;
+    font-size: 13pt;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #e8e0ff;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px rgba(180, 140, 255, 0.4);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ─── Pedal control buttons ──────────────────────────────────────────────── */
+
+.pedal-btn {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+    user-select: none;
+}
+
+.pedal-btn--move {
+    background: rgba(255, 255, 255, 0.08);
+    color: #aaa8cc;
+}
+
+.pedal-btn--move:hover {
+    background: rgba(255, 255, 255, 0.18);
+    color: #ddd8ff;
+    transform: scale(1.1);
+}
+
+.pedal-btn--delete {
+    background: rgba(220, 60, 60, 0.18);
+    color: #e06060;
+}
+
+.pedal-btn--delete:hover {
+    background: rgba(220, 60, 60, 0.42);
+    color: #ff9090;
+    transform: scale(1.1);
+}
+
+/* ─── Knobs row ──────────────────────────────────────────────────────────── */
+
+.knobs-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+}
+
+/* ─── Individual knob group (SVG knob + name label) ─────────────────────── */
+
+.knob-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ─── Knob wrapper ───────────────────────────────────────────────────────── */
+
+.knob-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: ns-resize;
+    user-select: none;
+}
+
+/* ─── SVG knob elements ──────────────────────────────────────────────────── */
+
+.knob-svg {
+    overflow: visible;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+    transition: filter 0.15s ease;
+}
+
+.knob-svg:hover,
+.knob-svg:focus {
+    outline: none;
+    filter: drop-shadow(0 2px 10px rgba(140, 100, 255, 0.55));
+}
+
+/* Knob body */
+.knob-track {
+    fill: #2e2e42;
+    stroke: #4a4a6e;
+    stroke-width: 2;
+}
+
+/* Outer ring drawn on top – gives a thin glint highlight */
+.knob-ring {
+    fill: none;
+    stroke: url(#knob-ring-gradient);
+    stroke-width: 2.5;
+    /* We use a CSS gradient trick with stroke */
+    stroke: rgba(255, 255, 255, 0.10);
+    pointer-events: none;
+}
+
+/* Pointer / indicator line */
+.knob-indicator {
+    stroke: #c084fc;
+    stroke-width: 3;
+    stroke-linecap: round;
+    pointer-events: none;
+    filter: drop-shadow(0 0 4px #c084fc);
+}
+
+/* ─── Value label (below the knob face) ──────────────────────────────────── */
+
+.knob-value-label {
+    font-family: Courier New, Courier, monospace;
+    font-size: 9pt;
+    color: #b0acdd;
+    letter-spacing: 0.04em;
+    pointer-events: none;
+}
+
+/* ─── Parameter name label (below the value) ─────────────────────────────── */
+
+.knob-name-label {
+    font-family: Courier New, Courier, monospace;
+    font-size: 8pt;
+    color: #7870a8;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    pointer-events: none;
 }
