@@ -255,8 +255,20 @@ function createEffectDom(effect) {
 
         if (prop['type'] === 'number' || prop['type'] === 'integer') {
             const step = prop['type'] === 'integer' ? 1 : 0.01;
-            const min = 0;
-            const max = defVal * 10;
+
+            let min = defVal * 9 * (-1);
+            if (prop['minimum'] !== undefined) {
+                min = prop['minimum'];
+            } else if (prop['exclusiveMinimum'] !== undefined) {
+                min = prop['exclusiveMinimum'];
+            }
+
+            let max = defVal * 10;
+            if (prop['maximum'] !== undefined) {
+                max = prop['maximum'];
+            } else if (prop['exclusiveMaximum'] !== undefined) {
+                max = prop['exclusiveMaximum'];
+            }
 
             const knobGroup = document.createElement('div');
             knobGroup.classList.add('knob-group');
